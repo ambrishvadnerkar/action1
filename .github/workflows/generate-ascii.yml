@@ -1,49 +1,35 @@
-name: Generate ASCII Artwork
-
-on: [push]
+name: Context testing
+on: push
 
 jobs:
-  build_job_1:
+  dump_contexts_to_log:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Installing cowsay
-        run: sudo apt-get install cowsay -y
-
-      - name: Executing cowsay
-        run: cowsay -f dragon "Run for cover, I am a DRAGON.....RAWR" >> dragon.txt
-
-      - name: Upload the Dragon text file
-        uses: actions/upload-artifact@v4
-        with:
-            name: dragon-txt-file
-            path: dragon.txt
-
-  test_job_2:
-    needs: build_job_1
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Dragon text file
-        uses: actions/download-artifact@v4
-        with:
-            name: dragon-txt-file
-
-      - name: Test File Exists
-        run: grep -i "dragon" dragon.txt
-  deply_job_3:
-    needs: test_job_2
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Dragon text file
-        uses: actions/download-artifact@v4
-        with:
-            name: dragon-txt-file
-
-      - name: Read File
-        run: cat dragon.txt
-        
-      - name: Deply
-        run: echo Deploying ... .. .
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: echo "$SECRETS_CONTEXT"
+      - name: Dump secrets context
+        env:
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
