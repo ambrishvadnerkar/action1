@@ -1,26 +1,35 @@
-name: My First Workflow
-
-on: [push]
+name: Context testing
+on: push
 
 jobs:
-  first_job:
+  dump_contexts_to_log:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Welcome message
-        run: |
-            echo "My First Github Action Job"
-            ls -ltra
-            cat README.md
-
-      - name: Generate ASCII Artwork
-        run: cowsat -f dragon "Run for cover, I am a DRAGON.....RAWR" >> dragon.txt
-
-    #   - name: List files
-    #     run: ls
-    
-    #   - name: Read file
-    #     run: cat README.md
-    
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: echo "$SECRETS_CONTEXT"
+      - name: Dump secrets context
+        env:
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
